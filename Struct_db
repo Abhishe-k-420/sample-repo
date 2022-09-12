@@ -1,0 +1,183 @@
+use db0
+
+  DROP TABLE IF EXISTS `users`;
+  CREATE TABLE`users` (
+    `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+    `first_name` varchar(32) DEFAULT NULL,
+    `last_name` varchar(32) DEFAULT NULL,
+    `DOB` DATE DEFAULT NULL,
+    `alias` varchar(32) DEFAULT NULL,
+    `emailid` varchar(32) DEFAULT NULL,
+    `state` varchar(32) DEFAULT NULL,
+    `city` varchar(32) DEFAULT NULL,
+    `pincode` varchar(32) DEFAULT NULL,
+    `country_code` int DEFAULT NULL,
+    `phone_number` varchar(10) DEFAULT NULL,
+    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `usertype` binary(1) DEFAULT NULL,
+    `profile_pic_link` varchar(255) DEFAULT NULL,
+    `background_pic_link` varchar(255) DEFAULT NULL,
+    `password` varchar(255) DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `user` (`id`, `created_at`)
+  ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
+  
+
+  DROP TABLE IF EXISTS `user_activity`;
+  CREATE TABLE`user_activity` (
+    `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+    `user_id` bigint unsigned NOT NULL,
+    `activity` varchar(255) DEFAULT NULL,
+    `activity_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `user_activity` (`id`, `activity_time`),
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
+
+
+  DROP TABLE IF EXISTS `user_notification`;
+  CREATE TABLE`user_notification` (
+    `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+    `user_id` bigint unsigned NOT NULL,
+    `notification_type` varchar(255) DEFAULT NULL,
+    `notification_status` binary(1) DEFAULT NULL,
+    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `status_changed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `user_` (`id`, `activity_time`),
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+  ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
+  
+
+  DROP TABLE IF EXISTS `game_info`;
+  CREATE TABLE`game_info` (
+    `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+    `title` varchar(255) DEFAULT NULL,
+    `game_logo_link` varchar(255) DEFAULT NULL,
+    `teamsize_1` bigint DEFAULT NULL,
+    `teamsize_2` bigint DEFAULT NULL,
+    `teamsize_3` bigint DEFAULT NULL,
+    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `gameinfo` (`id`, `created_at`),
+  ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
+   
+  DROP TABLE IF EXISTS `game_id`;
+  CREATE TABLE`game_id` (
+    `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+    `gameinfo_id` bigint unsigned NOT NULL,
+    `usergame_id` varchar(255) NOT NULL,
+    `user_id` bigint unsigned NOT NULL,
+    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `game_id` (`id`, `created_at`),
+    KEY `user_id` (`user_id`),
+    KEY `gameinfo_id` (`gameinfo_id`),
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`gameinfo_id`) REFERENCES `gameinfo` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
+  
+
+  DROP TABLE IF EXISTS `tournament_info`;
+  CREATE TABLE`tournament_info` (
+    `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+    `start_date` datetime DEFAULT NULL,
+    `elgibility` varchar(25) DEFAULT NULL,
+    `faq` text,
+    `termsconditions` text,
+    `end_date` varchar(25) NOT NULL,
+    `tournament_logo_link` varchar(25) NOT NULL,
+    `game_teamsize` bigint NOT NULL,
+    `game_title` varchar(255) DEFAULT NULL,
+    `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `end_date` (`end_date`),
+    UNIQUE KEY `tournament_logo_link` (`tournament_logo_link`),
+    UNIQUE KEY `game_teamsize` (`game_teamsize`),
+    UNIQUE KEY `game_title` (`game_title`),
+    FOREIGN KEY (`game_teamsize`) REFERENCES `gameinfo` (`teamsize_1`) ON DELETE CASCADE ON UPDATE CASCADE
+  ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
+  
+
+  DROP TABLE IF EXISTS `videos`;
+  CREATE TABLE`videos` (
+    `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+    `gameinfo_id` bigint unsigned NOT NULL,
+    `tournamentinfo_id` bigint unsigned DEFAULT NULL,
+    `videolink` varchar(255) DEFAULT NULL,
+    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `videos` (`id`, `created_at`),
+    KEY `gameinfo_id` (`gameinfo_id`),
+    KEY `tournamentinfo_id` (`tournamentinfo_id`),
+    FOREIGN KEY (`gameinfo_id`) REFERENCES `gameinfo` (`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`tournamentinfo_id`) REFERENCES `TournamentInfo` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
+
+
+  DROP TABLE IF EXISTS `team`;
+  CREATE TABLE`team` (
+    `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+    `captain` bigint unsigned NOT NULL,
+    `team_name` varchar(255) NOT NULL,
+    `team_pic_link` varchar(255) DEFAULT NULL,
+    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `team` (`id`, `created_at`),
+    KEY `captain` (`captain`),
+    FOREIGN KEY (`captain`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
+
+  
+  DROP TABLE IF EXISTS `team_members`;
+  CREATE TABLE`team_members` (
+    `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+    `team_id` bigint unsigned NOT NULL,
+    `captain_id` bigint unsigned NOT NULL,
+    `member_id` bigint NOT NULL,
+    `status` varchar(20) DEFAULT NULL,
+    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `team` (`id`, `created_at`),
+    KEY `captain_id` (`captain_id`),
+    KEY `team_id` (`team_id`),
+    FOREIGN KEY (`captain_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`team_id`) REFERENCES `team` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
+  
+ 
+  DROP TABLE IF EXISTS `registered_team`;
+  CREATE TABLE`registered_team` (
+    `id` bigint NOT NULL AUTO_INCREMENT,
+    `Team_id` bigint unsigned NOT NULL,
+    `TournamentInfo_id` bigint unsigned NOT NULL,
+    `captain` bigint unsigned NOT NULL,
+    `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`Team_id`),
+    KEY `captain` (`captain`),
+    KEY `TournamentInfo_id` (`TournamentInfo_id`),
+    FOREIGN KEY (`captain`) REFERENCES `team` (`captain`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`TournamentInfo_id`) REFERENCES `TournamentInfo` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`Team_id`) REFERENCES `team` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
+
+
+  DROP TABLE IF EXISTS `registered_team_members`;
+  CREATE TABLE`registered_team_members` (
+    `id` bigint NOT NULL, AUTO_INCREMENT
+    `Team_id` bigint unsigned NOT NULL,
+    `member_id` bigint unsigned NOT NULL,
+    `status` binary(1) DEFAULT NULL,
+    `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `member_id` (`member_id`),
+    UNIQUE KEY `Team_id` (`Team_id`),
+    FOREIGN KEY (`Team_id`) REFERENCES `team` (`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`member_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
+  
